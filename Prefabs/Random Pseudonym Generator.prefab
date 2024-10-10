@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3160582481300059383}
+  - component: {fileID: 2015679327034632850}
+  - component: {fileID: 8727669860511691416}
   m_Layer: 0
   m_Name: Random Pseudonym Generator
   m_TagString: Untagged
@@ -31,3 +33,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2015679327034632850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43584725090049975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9947381a87864a6f8e7ccbfb72939830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generateOnStartup: 1
+  rememberPseudonym: 0
+--- !u!114 &8727669860511691416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43584725090049975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db64482fdb84410a85f152fd28d25d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pseudonymBehaviour: {fileID: 0}

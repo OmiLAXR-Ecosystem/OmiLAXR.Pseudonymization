@@ -5,12 +5,32 @@ using UnityEngine;
 
 namespace OmiLAXR.Pseudonymization
 {
+    /// <summary>
+    /// Is generating an 100%-safe-unique pseudonym by using the web service https://mtlg.elearn.rwth-aachen.de/pseudo/. 
+    /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("OmiLAXR / Pseudonymization / Pseudonym Provider (MTLG)")]
     public class PseudonymProvider : PseudonymBehaviour
     {
-        public static PseudonymProvider Instance => (PseudonymProvider)_instance;
+        public static PseudonymProvider Instance { get; private set; }
 
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                
+                if (generateOnStartup)
+                    Generate();
+                
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        
         private struct PseudonymResponse
         {
             public string pseudonym;

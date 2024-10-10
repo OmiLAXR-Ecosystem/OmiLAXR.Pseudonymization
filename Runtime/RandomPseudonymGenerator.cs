@@ -7,11 +7,31 @@ using UnityEngine;
 
 namespace OmiLAXR.Pseudonymization
 {
+    /// <summary>
+    /// Is generating a random Pseudonym with a chartset of "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".
+    /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("OmiLAXR / Pseudonymization / Random Pseudonym Generator")]
     public class RandomPseudonymGenerator : PseudonymBehaviour
     {
-        public static RandomPseudonymGenerator Instance => (RandomPseudonymGenerator)_instance;
+        public static RandomPseudonymGenerator Instance { get; private set; }
+        
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                
+                if (generateOnStartup)
+                    Generate();
+                
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
         
         private static readonly System.Random Random = new System.Random();
         

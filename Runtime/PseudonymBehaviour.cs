@@ -7,8 +7,6 @@ namespace OmiLAXR.Pseudonymization
     public delegate void PseudonymBehaviourEvent(string pseudonym);
     public abstract class PseudonymBehaviour : MonoBehaviour
     {
-        protected static PseudonymBehaviour _instance;
-        
         public event PseudonymBehaviourEvent OnCreatedPseudonym;
 
         public bool generateOnStartup = true;
@@ -17,23 +15,6 @@ namespace OmiLAXR.Pseudonymization
         private void OnEnable()
         {
             // do nothing
-        }
-
-        private void Awake()
-        {
-            if (_instance == null)
-            {
-                _instance = this;
-                
-                if (generateOnStartup)
-                    Generate();
-                
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
         }
 
         public async void Generate()
