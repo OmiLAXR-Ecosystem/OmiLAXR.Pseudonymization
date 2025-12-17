@@ -1,0 +1,31 @@
+﻿cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "OmiLAXR.Pseudonymization"
+version: "1.0.1"
+date-released: 2025-12-17
+repository-code: "https://github.com/SGoerzen/OmiLAXR.Pseudonymization"
+url: "https://omilaxr.dev/"
+license: "AGPL-3.0-or-later"
+authors:
+  - given-names: "Sergej"
+    family-names: "Görzen"
+    orcid: "https://orcid.org/0000-0003-3853-2435"
+    affiliation: "RWTH Aachen University"
+abstract: >
+  OmiLAXR is the base package of a modular Learning Analytics framework for XR.
+  This package offers implementations to pseudonymize the actor.
+keywords:
+  - Learning Analytics
+  - Unity
+  - Pseudonymization
+preferred-citation:
+  type: software
+  title: "OmiLAXR.Pseudonymization"
+  version: "1.0.1"
+  date-released: 2025-12-17
+  url: "https://omilaxr.dev/"
+  authors:
+    - given-names: "Sergej"
+      family-names: "Görzen"
+      orcid: "https://orcid.org/0000-0003-3853-2435"
