@@ -45,6 +45,17 @@ namespace OmiLAXR.Pseudonymization
             rememberPseudonym = true;
         }
 
+        private IHttpClient _httpClient = UnityWebRequestHttpClient.Instance;
+
+        /// <summary>
+        /// HTTP client used to fetch pseudonyms (default: UnityWebRequest). Setting null restores the default.
+        /// </summary>
+        public IHttpClient HttpClient
+        {
+            get => _httpClient;
+            set => _httpClient = value ?? UnityWebRequestHttpClient.Instance;
+        }
+
         public string url => UriHelper.CombineToString(baseUrl, languageCode);
         
         protected override async Task<string> GenerateNewPseudonym()
@@ -55,9 +66,8 @@ namespace OmiLAXR.Pseudonymization
 
             var uri = qb.ToString();
 
-            var pseudonymResponse = await WebRequestHelper.GetJsonRequestAsync<PseudonymResponse>(uri);
-    
-            return pseudonymResponse.pseudonym;
+            var json = await HttpClient.GetStringAsync(uri);
+            return json == null ? null : JsonUtility.FromJson<PseudonymResponse>(json).pseudonym;
         }
 
     }

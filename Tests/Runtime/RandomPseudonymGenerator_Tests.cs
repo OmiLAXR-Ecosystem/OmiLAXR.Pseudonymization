@@ -1,24 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using OmiLAXR.Pseudonymization.Helper;
+using OmiLAXR.Utils;
 using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace OmiLAXR.Pseudonymization.Tests
 {
+    public sealed class InMemoryStore : IKeyValueStore
+    {
+        public readonly Dictionary<string, string> Values = new Dictionary<string, string>();
+        public int Saves;
+
+        public bool HasKey(string key) => Values.ContainsKey(key);
+        public string GetString(string key) => Values[key];
+        public void SetString(string key, string value) => Values[key] = value;
+        public void DeleteKey(string key) => Values.Remove(key);
+        public void Save() => Saves++;
+    }
+
+    public sealed class FakeHttpClient : IHttpClient
+    {
+        public readonly List<string> Requests = new List<string>();
+        public string Response = "{\"pseudonym\":\"BraveOtter\"}";
+
+        public Task<string> GetStringAsync(string uri)
+        {
+            Requests.Add(uri);
+            return Task.FromResult(Response);
+        }
+    }
+
     public class RandomPseudonymGenerator_Tests
     {
-        private const string PseudonymKey = "pseudonym";
-        private string _storedPseudonym;
         private readonly List<GameObject> _created = new List<GameObject>();
+        private InMemoryStore _store;
 
         [SetUp]
         public void SetUp()
         {
-            // The behaviour persists pseudonyms in PlayerPrefs, keep the developer's value intact.
-            _storedPseudonym = PlayerPrefs.HasKey(PseudonymKey) ? PlayerPrefs.GetString(PseudonymKey) : null;
-            PlayerPrefs.DeleteKey(PseudonymKey);
+            // An in-memory store keeps the developer's PlayerPrefs untouched
+            _store = new InMemoryStore();
         }
 
         [TearDown]
@@ -27,24 +52,22 @@ namespace OmiLAXR.Pseudonymization.Tests
             foreach (var go in _created)
                 Object.DestroyImmediate(go);
             _created.Clear();
+        }
 
-            if (_storedPseudonym == null)
-                PlayerPrefs.DeleteKey(PseudonymKey);
-            else
-                PlayerPrefs.SetString(PseudonymKey, _storedPseudonym);
-            PlayerPrefs.Save();
+        private T CreateBehaviour<T>(bool generateOnStartup, bool remember = false) where T : PseudonymBehaviour
+        {
+            var go = new GameObject(typeof(T).Name);
+            go.SetActive(false);
+            _created.Add(go);
+            var behaviour = go.AddComponent<T>();
+            behaviour.generateOnStartup = generateOnStartup;
+            behaviour.rememberPseudonym = remember;
+            behaviour.Store = _store;
+            return behaviour;
         }
 
         private RandomPseudonymGenerator CreateGenerator(bool generateOnStartup, bool remember = false)
-        {
-            var go = new GameObject("Pseudonym Generator");
-            go.SetActive(false);
-            _created.Add(go);
-            var generator = go.AddComponent<RandomPseudonymGenerator>();
-            generator.generateOnStartup = generateOnStartup;
-            generator.rememberPseudonym = remember;
-            return generator;
-        }
+            => CreateBehaviour<RandomPseudonymGenerator>(generateOnStartup, remember);
 
         [Test]
         public void RandomPseudonymGenerator_Generates_Six_Uppercase_Alphanumerics()
@@ -112,7 +135,8 @@ namespace OmiLAXR.Pseudonymization.Tests
             // Assert
             Assert.AreEqual(2, pseudonyms.Count);
             Assert.AreEqual(pseudonyms[0], pseudonyms[1]);
-            Assert.AreEqual(pseudonyms[0], generator.LoadPseudonym());
+            Assert.AreEqual(pseudonyms[0], _store.Values["pseudonym"]);
+            Assert.AreEqual(1, _store.Saves);
         }
 
         [Test]
@@ -129,6 +153,48 @@ namespace OmiLAXR.Pseudonymization.Tests
 
             // Assert
             Assert.AreEqual("ABC123", generator.LoadPseudonym());
+
+            // Act
+            generator.Store = null;
+
+            // Assert
+            Assert.AreSame(PlayerPrefsStore.Instance, generator.Store);
+        }
+
+        [Test]
+        public void PseudonymProvider_Fetches_Pseudonym_Once_Per_Generate()
+        {
+            // Arrange
+            var provider = CreateBehaviour<PseudonymProvider>(generateOnStartup: false);
+            var http = new FakeHttpClient();
+            provider.HttpClient = http;
+            provider.baseUrl = "https://example.org/pseudo/";
+            provider.languageCode = "de";
+            var pseudonyms = new List<string>();
+            provider.OnCreatedPseudonym += pseudonyms.Add;
+
+            // Act
+            provider.Generate();
+
+            // Assert
+            CollectionAssert.AreEqual(new[] { "https://example.org/pseudo/de?capitalize=True" }, http.Requests);
+            CollectionAssert.AreEqual(new[] { "BraveOtter" }, pseudonyms);
+        }
+
+        [Test]
+        public void PseudonymProvider_Failed_Request_Yields_Null()
+        {
+            // Arrange
+            var provider = CreateBehaviour<PseudonymProvider>(generateOnStartup: false);
+            provider.HttpClient = new FakeHttpClient { Response = null };
+            var pseudonyms = new List<string>();
+            provider.OnCreatedPseudonym += pseudonyms.Add;
+
+            // Act
+            provider.Generate();
+
+            // Assert
+            CollectionAssert.AreEqual(new string[] { null }, pseudonyms);
         }
 
         [Test]

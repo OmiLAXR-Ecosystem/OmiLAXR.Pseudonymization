@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using OmiLAXR.Utils;
 using UnityEngine;
 
 namespace OmiLAXR.Pseudonymization
@@ -11,6 +12,17 @@ namespace OmiLAXR.Pseudonymization
 
         public bool generateOnStartup = true;
         public bool rememberPseudonym = false;
+
+        private IKeyValueStore _store = PlayerPrefsStore.Instance;
+
+        /// <summary>
+        /// Where remembered pseudonyms are stored (default: PlayerPrefs). Setting null restores the default.
+        /// </summary>
+        public IKeyValueStore Store
+        {
+            get => _store;
+            set => _store = value ?? PlayerPrefsStore.Instance;
+        }
 
         private void OnEnable()
         {
@@ -45,13 +57,13 @@ namespace OmiLAXR.Pseudonymization
         
         public string LoadPseudonym()
         {
-            return PlayerPrefs.HasKey("pseudonym") ? PlayerPrefs.GetString("pseudonym") : null;
+            return Store.HasKey("pseudonym") ? Store.GetString("pseudonym") : null;
         }
 
         public void SavePseudonym(string pseudonym)
         {
-            PlayerPrefs.SetString("pseudonym", pseudonym);
-            PlayerPrefs.Save();
+            Store.SetString("pseudonym", pseudonym);
+            Store.Save();
         }
     }
 }
