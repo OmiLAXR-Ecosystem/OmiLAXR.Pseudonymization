@@ -1,6 +1,6 @@
 {
   "name": "com.rwth.unity.omilaxr.pseudonymization",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "OmiLAXR.Pseudonymization",
   "description": "This is an package for creating unique pseudonyms.",
   "unity": "2021.3",
