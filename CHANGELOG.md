@@ -10,6 +10,7 @@
 ### Changed
 - Raised the core dependency `com.rwth.unity.omilaxr` to 2.2.5, which provides `IKeyValueStore` and `PlayerPrefsStore`.
 - Updated package version metadata.
+- Inspector tooltips for the fields of `PseudonymProvider` and `PseudonymBehaviourPrinter`, and an XML summary for `PseudonymBehaviourPrinter`. Both appear on docs.omilaxr.dev.
 
 ### Fixed
 - `PseudonymProvider` fires `OnCreatedPseudonym` only once per created pseudonym.

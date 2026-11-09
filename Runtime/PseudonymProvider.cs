@@ -36,8 +36,11 @@ namespace OmiLAXR.Pseudonymization
             public string pseudonym;
         }
 
+        [Tooltip("Address of the pseudonym web service.")]
         public string baseUrl = "https://mtlg.elearn.rwth-aachen.de/pseudo/pseudonym/";
+        [Tooltip("Language of the generated pseudonym, e.g. en or de.")]
         public string languageCode = "en";
+        [Tooltip("Capitalize the words of the pseudonym.")]
         public bool capitalize = true;
 
         private void Reset()
