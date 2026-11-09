@@ -56,7 +56,6 @@ namespace OmiLAXR.Pseudonymization
             var uri = qb.ToString();
 
             var pseudonymResponse = await WebRequestHelper.GetJsonRequestAsync<PseudonymResponse>(uri);
-            FireCreatedPseudonym(pseudonymResponse.pseudonym);
     
             return pseudonymResponse.pseudonym;
         }
