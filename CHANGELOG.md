@@ -8,6 +8,7 @@
 - `PseudonymBehaviour.Store` (`IKeyValueStore`, default `PlayerPrefsStore`) to replace where pseudonyms are remembered. Setting `null` restores the default.
 
 ### Changed
+- Raised the core dependency `com.rwth.unity.omilaxr` to 2.2.5, which provides `IKeyValueStore` and `PlayerPrefsStore`.
 - Updated package version metadata.
 
 ### Fixed

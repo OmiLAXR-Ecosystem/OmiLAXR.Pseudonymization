@@ -10,7 +10,7 @@
   "licensesUrl": "https://gitlab.com/learntech-rwth/omilaxr-ecosystem/pseudnomprovider/-/blob/main/LICENSE",
   "homepage": "https://omilaxr.dev/",
   "dependencies": {
-    "com.rwth.unity.omilaxr": "2.0.0",
+    "com.rwth.unity.omilaxr": "2.2.5",
     "com.unity.nuget.newtonsoft-json": "3.0.2"
   },
   "keywords": [
